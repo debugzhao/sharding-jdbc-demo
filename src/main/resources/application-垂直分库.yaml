@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: sharding-jdbc-demo
+  profiles:
+    active: dev
+  shardingsphere: # 注意这里不能用中划线 - 连接，否则读取不到配置文件
+    datasource:
+      names: server-user,server-order # 数据源名称
+      server-user:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3301/db_user
+        username: root
+        password: 123456
+      server-order:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3302/db_order
+        username: root
+        password: 123456
+    mode:
+      type: Memory # 内存模式（当前配置文件会作为元数据加载到内存中）
+    props:
+      sql-show: true
+    rules:
+      sharding: # 标准分片表配置
+        tables:
+          t_user: # 逻辑数据源
+            # 由数据源名 + 表名组成，以小数点分隔。多个表以逗号分隔，支持 inline 表达式。
+            # 缺省表示使用已知数据源与逻辑表名称生成数据节点，用于广播表（即每个库中都需要一个同样的表用于关联查询，多为字典表）或只分库不分表且所有库的表结构完全一致的情况
+            actual-data-nodes: server-user.t_user # 实际数据节点
+          t_order:
+            actual-data-nodes: server-order.t_order

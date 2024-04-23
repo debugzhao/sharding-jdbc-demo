@@ -1,6 +1,7 @@
 package com.example.shardingjdbcdemo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.shardingjdbcdemo.entity.Order;
 import com.example.shardingjdbcdemo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,5 +12,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @Desc
  */
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface OrderMapper extends BaseMapper<Order> {
 }
