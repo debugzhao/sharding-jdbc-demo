@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: sharding-jdbc-demo
+  profiles:
+    active: dev
+  shardingsphere: # 注意这里不能用中划线 - 连接，否则读取不到配置文件
+    datasource:
+      names: master,slave1,slave2 # 数据源名称
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3306/db_user
+        username: root
+        password: 123456
+      slave1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3307/db_user
+        username: root
+        password: 123456
+      slave2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3308/db_user
+        username: root
+        password: 123456
+    mode:
+      type: Memory # 内存模式（当前配置文件会作为元数据加载到内存中）
+    props:
+      sql-show: true
+    rules:
+      readwrite-splitting: # 读写分离配置
+        data-sources:
+          myds: # 数据源名字为myds
+            load-balancer-name: alg_weight
+            props:
+              read-data-source-names: slave1,slave2 # 写数据源名字
+              write-data-source-name: master        # 读数据源名字
+            type: Static # 数据源地址类型为静态配置的
+        load-balancers:
+          alg_random:
+            type: RANDOM
+          alg_round:
+            type: ROUND_ROBIN # 轮询算法
+          alg_weight:
+            props:
+              slave1: 1
+              slave2: 2
+            type: WEIGHT

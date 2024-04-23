@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: sharding-jdbc-demo
+  profiles:
+    active: dev
+  sharding-sphere:
+    datasource:
+      master:
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3306/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+      names: master,slave1,slave2
+      slave1:
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3307/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+      slave2:
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://172.16.45.107:3308/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+    mode:
+      type: Memory
+    props:
+      sql-show: true
+    rules:
+      readwrite-splitting:
+        data-sources:
+          myds:
+            load-balancer-name: alg_round
+            props:
+              read-data-source-names: slave1,slave2
+              write-data-source-name: master
+            type: Static
+        load-balancers:
+          alg_random:
+            type: RANDOM
+          alg_round:
+            type: ROUND_ROBIN
+          alg_weight:
+            props:
+              slave1: 1
+              slave2: 2
+            type: WEIGHT
