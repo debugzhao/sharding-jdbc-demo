@@ -39,17 +39,21 @@ spring:
             actual-data-nodes: server-user.t_user # 实际数据节点
           t_order:
             # 行内表达式，最终会被解析为 server-order0.t_order0, server-order0.t_order1, server-order1.t_order0, server-order1.t_order1
-            actual-data-nodes: server-order$->{0..1}.t_order0
-            database-strategy:
+            actual-data-nodes: server-order$->{0..1}.t_order$->{0..1}
+            database-strategy: # 分库策略（有多个数据库，该路由到哪个数据库）
               standard:
                 sharding-column: user_id # 根据user_id列进行分片
-                sharding-algorithm-name: alg_mod
+                sharding-algorithm-name: alg_inline_user_id
+            table-strategy: # 分表策略（一个数据库有多个表，该路由到哪个表）
+              standard:
+                sharding-column: order_no
+                sharding-algorithm-name: alg_hash_mod
         sharding-algorithms: # 分片算法
           alg_inline_user_id: # 自定义的分片算法名称
             type: INLINE # 行表达式分片算法
             props:
               algorithm-expression: server-order$->{user_id % 2} # 根据user_id进行过取模运算
-          alg_mod:
-            type: MOD # 取模分片算法
+          alg_hash_mod:
+            type: HASH_MOD # 取模分片算法
             props:
               sharding-count: 2

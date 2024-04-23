@@ -1,5 +1,6 @@
 package com.example.shardingjdbcdemo;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.shardingjdbcdemo.entity.Order;
 import com.example.shardingjdbcdemo.entity.User;
 import com.example.shardingjdbcdemo.mapper.OrderMapper;
@@ -37,13 +38,28 @@ public class ShardingTest {
      */
     @Test
     public void testInsertOrderDataStrategy() {
-        for (long i = 4; i < 8; i++) {
+        for (long i = 100; i < 104; i++) {
             Order order = new Order();
             order.setAmount(new BigDecimal(100));
-            order.setUserId(i + 1);
-            order.setOrderNo("123456");
+            order.setUserId(2L);
+            order.setOrderNo("GEEK00" + i);
             orderMapper.insert(order);
         }
     }
+
+    /**
+     * 查询所有的订单数据
+     */
+    @Test
+    public void listAllOrder() {
+        orderMapper.selectList(null).forEach(System.out::println);
+    }
+
+    @Test
+    public void listOrderByUserId() {
+        QueryWrapper<Order> wrapper = new QueryWrapper<Order>().eq("user_id", 1L);
+        orderMapper.selectList(wrapper).forEach(System.out::println);
+    }
+
 }
 
