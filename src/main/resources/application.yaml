@@ -76,3 +76,4 @@ spring:
         key-generators:
           alg_snowflake: # 自定义分布式算法名称
             type: SNOWFLAKE # 分布式算法类型
+        binding-tables[0]: t_order,t_order_item # 绑定表配置（避免出现无效的笛卡尔积运算）
