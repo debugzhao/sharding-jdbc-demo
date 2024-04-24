@@ -38,7 +38,15 @@ public class ShardingTest {
      */
     @Test
     public void testInsertOrderDataStrategy() {
-        for (long i = 100; i < 104; i++) {
+        for (long i = 1; i < 5; i++) {
+            Order order = new Order();
+            order.setAmount(new BigDecimal(100));
+            order.setUserId(1L);
+            order.setOrderNo("GEEK00" + i);
+            orderMapper.insert(order);
+        }
+
+        for (long i = 5; i < 9; i++) {
             Order order = new Order();
             order.setAmount(new BigDecimal(100));
             order.setUserId(2L);
