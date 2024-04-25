@@ -64,8 +64,6 @@ spring:
             key-generate-strategy: # 分布式序列策略
               column: id # 分布式序列列名称
               key-generator-name: alg_snowflake # 自定义分布式算法名称
-          t_dict:
-            actual-data-nodes: server-order$->{0..1}.t_dict,server-user.t_dict
         sharding-algorithms: # 分片算法
           alg_inline_user_id: # 自定义的分片算法名称
             type: INLINE # 行表达式分片算法
@@ -79,4 +77,3 @@ spring:
           alg_snowflake: # 自定义分布式算法名称
             type: SNOWFLAKE # 分布式算法类型
         binding-tables[0]: t_order,t_order_item # 绑定表配置（避免出现无效的笛卡尔积运算）
-        broadcast-tables[0]: t_dict # 广播表配置

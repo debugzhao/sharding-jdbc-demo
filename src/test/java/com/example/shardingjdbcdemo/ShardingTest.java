@@ -1,9 +1,11 @@
 package com.example.shardingjdbcdemo;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.shardingjdbcdemo.entity.Dict;
 import com.example.shardingjdbcdemo.entity.Order;
 import com.example.shardingjdbcdemo.entity.OrderItem;
 import com.example.shardingjdbcdemo.entity.User;
+import com.example.shardingjdbcdemo.mapper.DictMapper;
 import com.example.shardingjdbcdemo.mapper.OrderItemMapper;
 import com.example.shardingjdbcdemo.mapper.OrderMapper;
 import com.example.shardingjdbcdemo.mapper.UserMapper;
@@ -30,6 +32,9 @@ public class ShardingTest {
 
     @Autowired
     private OrderItemMapper orderItemMapper;
+
+    @Autowired
+    private DictMapper dictMapper;
 
     /**
      * 水平分片测试
@@ -117,6 +122,26 @@ public class ShardingTest {
     public void orderAmount() {
         List<OrderItemVo> orderItemVoList = orderMapper.orderAmount();
         orderItemVoList.forEach(System.out::println);
+    }
+
+    /**
+     * 广播表插入测试
+     * 会同时向所有数据源做插入操作，保持所有数据源为最新副本
+     */
+    @Test
+    public void testInsertBroadcast() {
+        Dict dict = new Dict();
+        dict.setDictType("电子产品类");
+        dictMapper.insert(dict);
+    }
+
+    /**
+     * 广播表查询操作
+     * 根据负载均衡算法只会查询一个数据源
+     */
+    @Test
+    public void testSelectBroadcast() {
+        dictMapper.selectList(null).forEach(System.out::println);
     }
 }
 
